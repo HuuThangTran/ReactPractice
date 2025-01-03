@@ -3,11 +3,13 @@ import { useState } from "react";
 interface Props {
   items: string[];
   heading: string;
+  // we want a function that take in (item: string) => void
+  onSelectItem: (item: string) => void;
 }
 
 // function ListGroup(props) {
 
-function ListGroup({ items, heading }: Props) {
+function ListGroup({ items, heading, onSelectItem }: Props) {
   // items = [];
 
   // Hook
@@ -29,6 +31,7 @@ function ListGroup({ items, heading }: Props) {
             key={item}
             onClick={() => {
               setSeletectedIndex(index);
+              onSelectItem(item);
             }}
           >
             {item}
