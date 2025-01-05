@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import Button from "./Button";
+import Button from "./Button/Button";
 interface Props {
   children: ReactNode;
   onClose: () => void;

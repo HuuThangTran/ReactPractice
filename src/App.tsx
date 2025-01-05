@@ -1,7 +1,9 @@
 import Alert from "./components/Alert";
-import ListGroup from "./components/ListGroup";
+import ListGroup from "./components/ListGroup/";
 import Button from "./components/Button";
 import { useState } from "react";
+import "./App.css";
+import Like from "./components/Like";
 
 function App() {
   let items = ["New York", "San Francisco", "Tokyo", "London", "Paris"];
@@ -26,11 +28,13 @@ function App() {
       >
         Button
       </Button> */}
-      <ListGroup
+      {/* <ListGroup
         items={items}
         heading="Cities"
         onSelectItem={handleSelectItem}
-      ></ListGroup>
+      ></ListGroup> */}
+      {/* <Button onClick={() => console.log("Clicked")}>My Button</Button> */}
+      <Like onClick={() => console.log("Clicked")}></Like>
     </>
   );
 }
