@@ -4,18 +4,31 @@ import Button from "./components/Button";
 import { useState } from "react";
 import "./App.css";
 import Like from "./components/Like";
+import Cart from "./components/Cart";
+import Navbar from "./components/Navbar";
 
 function App() {
-  let items = ["New York", "San Francisco", "Tokyo", "London", "Paris"];
+  //==========================================
+  // sharing State between Component exercise
+  const [cartItem, setCartItem] = useState(["Product 1", "Product 2"]);
+  //==========================================
 
-  const handleSelectItem = (item: string) => {
-    console.log(item);
-  };
+  // let items = ["New York", "San Francisco", "Tokyo", "London", "Paris"];
+
+  // const handleSelectItem = (item: string) => {
+  //   console.log(item);
+  // };
 
   const [alertVisiblity, setAlertVisibility] = useState(false);
 
   return (
     <>
+      {/* ========================================== */}
+      {/* // sharing State between Component exercise const [cartItem, setCartItem] */}
+      <Navbar itemCartCount={cartItem.length} />
+      <Cart cartItemName={cartItem} onClick={() => setCartItem([])} />
+      {/* ========================================== */}
+
       {/* {alertVisiblity && (
         <Alert onClose={() => setAlertVisibility(false)}>My Alert</Alert>
       )}
@@ -34,7 +47,7 @@ function App() {
         onSelectItem={handleSelectItem}
       ></ListGroup> */}
       {/* <Button onClick={() => console.log("Clicked")}>My Button</Button> */}
-      <Like onClick={() => console.log("Clicked")}></Like>
+      {/* <Like onClick={() => console.log("Clicked")}></Like> */}
     </>
   );
 }
