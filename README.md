@@ -22,6 +22,52 @@ To create a React app with Vite and TypeScript, run:
 npm create vite@latest
 ```
 
+### Project Stucture:
+
+- `node_modules`:
+
+  - Contains all the installed third-party dependencies such as React, ReactDOM, and other packages like TypeScript, Webpack, Babel, and various libraries (e.g., axios, react-router-dom, etc.).
+
+  - This directory is automatically created when you run npm install or yarn install.
+
+- `public`:
+
+  - public assests of all website exist like images, videos, files etc..
+
+- `src`:
+
+  - The Source code of our components
+  - This is where all your application code lives, including React components, styles, utility functions, hooks, and TypeScript files.
+  - Typical subdirectories might include:
+    - components/: React components (e.g., Button, Header, etc.).
+    - styles/: CSS, SCSS, or styled-components files.
+    - assets/: Image, font, or other static files used in your components.
+    - utils/: Helper functions and utilities.
+    - hooks/: Custom React hooks.
+    - pages/: If using a router, this directory might contain different page components (e.g., Home, About, etc.).
+
+- `index.html`:
+
+  - containes a div with a ID of root which is the container of our application
+
+- `package.json`:
+
+  - This file holds metadata about the project and is a central place for managing dependencies, scripts, and project settings.
+  - **Scripts**: Defines commands for running, building, testing, and linting your app (e.g., `npm start`, `npm run build`).
+  - **Dependencies**: Lists all the npm packages the project depends on.
+  - **DevDependencies**: Lists tools needed for development, such as Webpack, Babel, ESLint, etc.
+  - **Main entry point**: Specifies the entry point (usually src/index.tsx for React TypeScript apps).
+
+- `tsconfig.jsopn`:
+
+  - TypeScript compiler configuration
+
+- `vite.config.ts`:
+
+  - TypeScript compiler configuration
+
+### Creating a React Component
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
