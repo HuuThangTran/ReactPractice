@@ -68,53 +68,75 @@ npm create vite@latest
 
 ### Creating a React Component
 
-# React + TypeScript + Vite
+- The extension of TypeScript files should be **`.ts`** or **`.tsx`**:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+  - **`.ts`** for plain TypeScript files (without JSX).
+  - **`.tsx`** for React components that include JSX syntax (used when writing React components with TypeScript).
 
-Currently, two official plugins are available:
+- There are two ways to create a React component: using a JavaScript class or a function.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Example of a function component:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+```
+// PascalCasing
+function Message() {
+  return <h1>Hello World</h1>
+}
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- Note: This is not plain HTML in the middle of JavaScript; it's JSX. JSX gets compiled into regular JavaScript code, which ultimately gets rendered as React elements, similar to:
 
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
 ```
+React.createElememnt('h1') etc...
+```
+
+- To use this component in other parts of your application, you need to export it:
+
+```
+export default Message;
+```
+
+- In your main `App` component:
+
+```
+function App() {
+  return <Message />;
+}
+```
+
+- **Hot Module Replacement (HMR)**: Vite, which is commonly used with React projects, supports hot module replacement. This means when you make changes to your code, the browser will automatically update the page without needing a full reload.
+- To create dynamic content inside JSX, you need to use curly braces `{}`. Inside the braces, you can write any valid JavaScript expression (an expression is a piece of code that produces a value).
+- Example of dynamic content:
+
+```
+const name = 'John';
+return <h1>Hello, {name}!</h1>;
+```
+
+### How React Works:
+
+- In a React application, we build a **component tree**, with the `App` component acting as the root and other components (such as `Message`) as child components. Here's how React processes this tree:
+
+  - 1. **Virtual DOM**: When the application starts, React takes the component tree and builds a JavaScript data structure called the **Virtual DOM**. This Virtual DOM is a lightweight representation of the actual DOM in the browser. Each node in the Virtual DOM represents a component and its properties.
+  - 2. **State Changes**: When the state or data of a component changes, React updates the Virtual DOM to reflect the new state. It then compares the current version of the Virtual DOM with the previous version to identify which nodes need to be updated.
+  - 3. **Efficient Updates**: React only updates the nodes in the actual DOM that have changed, ensuring that the update process is efficient and doesn't require re-rendering the entire page. These updates to the actual DOM are done through `ReactDOM`.
+
+- In the `index.html`:
+
+  - We typically have a `<div>` element with the ID `root`. This is where React will mount the application.
+
+- In the main entry file (e.g., `src/main.tsx`):
+
+  - We use `ReactDOM.createRoot()` to hook React into the DOM. For example:
+
+  ```tsx
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  ```
+
+  - This initializes the React app and renders it inside the `div` with the ID root.
+
+- What is `strictMode`:
+
+  - `StrictMode` is a built-in component in React that helps identify potential problems in your application during development. It doesn’t have any visual representation in the UI but provides warnings in the development environment to help improve the code's quality and performance.
+
+- React is commonly used to build cross-platform applications that work across different operating systems, device types, and web browsers. For mobile development, React Native is used to build native apps for iOS and Android using the same component-based architecture and principles as React.
