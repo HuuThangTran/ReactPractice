@@ -163,3 +163,182 @@ return <h1>Hello, {name}!</h1>;
   - **Animations**: For adding animations and transitions to your app (e.g., `Framer Motion`, `React Spring`).
 
 - React provides the foundation for building the UI, but these additional tools and libraries make it easier to handle the other essential aspects of application development.
+
+## Building Components
+
+- In this section, we will cover the fundamental concepts in React applications:
+  - **Building Components**: Understanding the role of components in React and how to create them.
+  - **Rendering Markup with JSX**: How JSX is used to define the structure of your UI in React components.
+  - **Managing State**: Using React’s state management to make your components dynamic and interactive.
+  - **Passing Input via Properties (Props)**: How to pass data to child components through props.
+  - **Debugging React Apps**: Techniques and tools for debugging React applications effectively.
+
+### Creating a ListGroup Componnets:
+
+- In this lesson, we will create a basic **ListGroup** component using **Bootstrap** to give our application a modern look and feel. Bootstrap is a very popular CSS library that helps with responsive design and UI components.
+
+1. **Install Bootstrap**:
+
+- To get started, we need to install Bootstrap in our project. Run the following command:
+
+```bash
+npm i bootstrap
+```
+
+2. **Import Bootstrap CSS**: After installation, we need to import the Bootstrap CSS file into our project. To do this, add the following import to your `main.tsx` file:
+
+```
+import "bootstrap/dist/css/bootstrap.css"
+```
+
+- This will ensure that the styles are applied to your app. You can confirm it's working by running the app using:
+
+```
+npm run dev
+```
+
+3. **Clean up default CSS**: Remove the content inside `app.css` and `index.css` files to avoid conflicts with Bootstrap styles.
+4. **Create a Components Folder**: Create a new folder named `components` inside the `src` folder. This is where we will store our React components.
+5. **Create ListGroup Component**: Inside the components folder, create a file called `ListGroup.tsx`. Follow PascalCase naming convention for the component file.
+
+```
+function ListGroup() {
+  return <h1>List Group</h1>;
+}
+
+export default ListGroup;
+```
+
+6. **Use the ListGroup Component in App**: Open `App.tsx`, and import the `ListGroup` component.
+
+```
+import ListGroup from "./components/ListGroup";
+
+function App() {
+  return <ListGroup />;
+}
+
+export default App;
+```
+
+7. **Get ListGroup Code from Bootstrap**: Go to the Bootstrap documentation and navigate to **Components → ListGroup**. Copy the sample code for a list group, which typically looks like this:
+
+- In JSX, `class` is a reserved keyword in JavaScript, so it must be written as `className` instead. For example:
+
+```tsx
+function ListGroup() {
+  return (
+    <ul className="list-group">
+      <li className="list-group-item">Item 1</li>
+      <li className="list-group-item">Item 2</li>
+      <li className="list-group-item">Item 3</li>
+    </ul>
+  );
+}
+```
+
+10. **Tips**:
+
+- To open a file quickly, use **Ctrl + P** to open the command palette and search for the file.
+- To select multiple occurrences of the same word, use **Ctrl + D** to select the next occurrence (for multiple cursors).
+- For JSX code that spans multiple lines, wrap it inside parentheses `()`.
+
+### Fragments
+
+In React, a component can only return a **single element**. If you try to return multiple elements without wrapping them, it will result in a **compilation error**.
+
+For example, the following code will cause an error:
+
+```tsx
+function ListGroup() {
+  return (
+    <h1>List</h1>
+    <ul className="list-group">
+      <li className="list-group-item">Item 1</li>
+      <li className="list-group-item">Item 2</li>
+      <li className="list-group-item">Item 3</li>
+    </ul>
+  );
+}
+```
+
+- React expects the component to return a single parent element. In this case, the code above tries to return two separate elements (`<h1>` and `<ul>`) without a wrapper, which is not allowed.
+
+- The above code is equivalent to:
+
+```tsx
+return (
+  React.createElement("h1", null, "List");
+  React.createElement("ul", { className: "list-group" },
+    React.createElement("li", { className: "list-group-item" }, "Item 1"),
+    React.createElement("li", { className: "list-group-item" }, "Item 2"),
+    React.createElement("li", { className: "list-group-item" }, "Item 3")
+  );
+)
+```
+
+- React requires one single returnable element from the component, which is why multiple elements like this won’t work.
+- To solve this problem, there are different approaches:
+
+1. **Wrapping with a** `<div>`:
+
+- You can wrap multiple elements in a `div` to make it work. However, this creates an unnecessary extra node in the DOM.
+- To quickly wrap elements, you can use **Ctrl + P** to open the command palette and search for the "wrap with abbreviation" feature. You can then select `div`.
+
+```tsx
+function ListGroup() {
+  return (
+    <div>
+      <h1>List</h1>
+      <ul className="list-group">
+        <li className="list-group-item">Item 1</li>
+        <li className="list-group-item">Item 2</li>
+        <li className="list-group-item">Item 3</li>
+      </ul>
+    </div>
+  );
+}
+```
+
+2. **Using React Fragments**:
+
+- A better approach is to use **Fragments**, which allow you to group multiple elements without introducing an extra DOM node
+- To use Fragments, first, import it:
+  `import { Fragment } from "react";`
+- Then wrap the elements inside a `<Fragment>` tag:
+
+```tsx
+function ListGroup() {
+  return (
+    <Fragment>
+      <h1>List</h1>
+      <ul className="list-group">
+        <li className="list-group-item">Item 1</li>
+        <li className="list-group-item">Item 2</li>
+        <li className="list-group-item">Item 3</li>
+      </ul>
+    </Fragment>
+  );
+}
+```
+
+3. Using Short Syntax for Fragments:
+
+- React also supports a short syntax for fragments, which uses empty angle brackets (`<>` and `</>`) to wrap elements without the need to import `Fragment`.
+
+```tsx
+function ListGroup() {
+  return (
+    <>
+      <h1>List</h1>
+      <ul className="list-group">
+        <li className="list-group-item">Item 1</li>
+        <li className="list-group-item">Item 2</li>
+        <li className="list-group-item">Item 3</li>
+      </ul>
+    </>
+  );
+}
+```
+
+- This approach is very convenient, as it avoids adding unnecessary imports and still allows you to group elements together without extra nodes in the DOM.
