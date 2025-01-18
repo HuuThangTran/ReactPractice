@@ -618,3 +618,111 @@ const handleClick = (event: React.MouseEvent) => {
   ` import { MouseEvent } from "react";`
 - When using the `handleClick` function in JSX, you pass it as a reference, not by invoking it
   `onClick={handleClick}`
+
+### **Managing State**
+
+- Suppose we want to highlight an item when it is clicked. To achieve this, we can use the `active` CSS class provided by Bootstrap.
+
+- Initially, we might try to use a local variable like this:
+
+```tsx
+let selectedIndex = -1; // No item selected (-1), 0 for the first item, etc.
+
+return (
+  <>
+    <h1>List</h1>
+    <ul className="list-group">
+      {items.length === 0 && <p>No item found</p>}
+      {items.map((item, index) => (
+        <li
+          key={item}
+          className={
+            selectedIndex === index
+              ? "list-group-item active"
+              : "list-group-item"
+          }
+          onClick={() => {
+            selectedIndex = index;
+            console.log(selectedIndex); // Log the updated index
+          }}
+        >
+          {item}
+        </li>
+      ))}
+    </ul>
+  </>
+);
+```
+
+- The above approach doesn’t work because `selectedIndex` is a local variable. React is unaware of its changes, so the component doesn’t re-render when selectedIndex is updated.
+- => To let React know that the component's data (or state) might change over time, we need to use the `useState` hook.
+
+```tsx
+import { useState } from "react";
+
+const [selectedIndex, setSelectedIndex] = useState(-1);
+```
+
+- **What is** `useState`?
+
+  - `useState` is a React hook that allows us to manage state in a functional component.
+  - It returns an array with two elements:
+    - The current state value.
+    - A function to update the state value.
+  - By using the updater function, React is notified of changes in the state and will re-render the component to update the DOM.
+
+- Here’s the updated version of the component using useState:
+
+```tsx
+import { useState } from "react";
+
+function ListGroup({ items }) {
+  const [selectedIndex, setSelectedIndex] = useState(-1); // Initialize state
+
+  return (
+    <>
+      <h1>List</h1>
+      <ul className="list-group">
+        {items.length === 0 && <p>No item found</p>}
+        {items.map((item, index) => (
+          <li
+            key={item}
+            className={
+              selectedIndex === index
+                ? "list-group-item active"
+                : "list-group-item"
+            }
+            onClick={() => setSelectedIndex(index)} // Update state
+          >
+            {item}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+```
+
+- Key points:
+
+  - State in React:
+    - State represents data that changes over time in a component.
+    - When state changes, React re-renders the component to reflect the updated state in the DOM.
+  - Multiple States:
+
+        - Each component can have multiple states:
+
+        ```tsx
+        const [selectedIndex, setSelectedIndex] = useState(-1);
+
+        const [name, setName] = useState("");
+
+        ```
+
+  - Component Isolation:
+
+    - Each component has its own isolated state. For example, if there are two `ListGroup` components, each will manage its state independently.
+
+  - State Update:
+
+    - Use the updater function (`setSelectedIndex`) to update the state. React will automatically handle the re-rendering process.
