@@ -726,3 +726,451 @@ function ListGroup({ items }) {
   - State Update:
 
     - Use the updater function (`setSelectedIndex`) to update the state. React will automatically handle the re-rendering process.
+
+### Passing Data via Props:
+
+- **Why Use Props?**: Props allow us to make components reusable by passing data to them. For example, instead of creating separate components for lists of names or colors, we can use a single component and pass the data via props.
+- **Defining Props in TypeScript**:
+
+1. **Determining the Shape of Props:**
+
+- Decide the structure of the input object for your component. For instance:
+
+```tsx
+{ items: [], heading: string }
+```
+
+2. **Defining the Props Shape with an Interface**:
+
+- Use TypeScript's `interface` to define the structure:
+
+```tsx
+interface Props {
+  items: string[];
+  heading: string;
+}
+```
+
+3. **Adding Props to the Component:**
+
+- Pass the props as an parameter with type to the component function:
+
+```tsx
+function ListGroup(props: Props) {
+  return (
+    <>
+      <h1>{props.heading}</h1>
+      <ul className="list-group">
+        {props.items.map((item, index) => (
+          <li key={index} className="list-group-item">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+```
+
+5. **Using the Component in a Parent Component**:
+
+- Define the Data in the Parent Component:
+  `const items = ["New York", "Los Angeles", "Chicago"];`
+
+- Use the ListGroup component and pass the data:
+
+```tsx
+function App() {
+  return <ListGroup items={items} heading="Cities" />;
+}
+```
+
+- If the required `props` (`items` or `heading`) are missing, TypeScript throws an error:
+  `Type '{}' is missing the following properties from type 'Props': items, heading`
+
+- Instead of using `props.<property>` repeatedly, destructure the props for cleaner code:
+
+```tsx
+function ListGroup({ items, heading }: Props) {
+  return (
+    <>
+      <h1>{heading}</h1>
+      <ul className="list-group">
+        {items.map((item, index) => (
+          <li key={index} className="list-group-item">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+```
+
+### Passing Function via Props
+
+- In real-world applications, it's common for something to happen when a user interacts with a component, such as clicking an item. For instance, you may want to:
+  - Redirect the user.
+  - Filter data.
+  - Perform other actions specific to your application's logic.
+- However, these actions can vary between applications. To keep our components reusable, we should not hard-code the logic directly inside the component. Instead, we need a mechanism to notify the parent (or consumer) of the component when an event occurs, such as when an item is selected.
+
+- **Example: Passing a Function via Props**
+
+```tsx
+function App() {
+  const items = ["New York", "San Francisco", "Tokyo", "London"];
+
+  // Define an event handler for item selection.
+  const handleSelectItem = (item: string) => {
+    console.log("Selected Item:", item);
+  };
+
+  // Pass the function as a prop.
+  return (
+    <ListGroup items={items} heading="Cities" onSelectItem={handleSelectItem} />
+  );
+}
+```
+
+- **Child Component** (`ListGroup`):
+
+  1. **Defining the Props**: In TypeScript, use an `interface` to define the shape of the props object. Here, we add a property for the function that handles the event.
+
+  ```tsx
+  interface Props {
+    items: string[];
+    heading: string;
+    onSelectItem: (item: string) => void; // Function that takes a string and returns void.
+  }
+  ```
+
+  2. **Using the Props in the Component**: Pass the function via props and call it when needed (e.g., when an item is clicked).
+
+  ```tsx
+  function ListGroup({ items, heading, onSelectItem }: Props) {
+    return (
+      <>
+        <h1>{heading}</h1>
+        <ul className="list-group">
+          {items.map((item, index) => (
+            <li
+              key={index}
+              className="list-group-item"
+              onClick={() => onSelectItem(item)} // Call the function with the clicked item.
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+  }
+  ```
+
+  - **Why Use a Function Prop?**?
+    - It keeps the logic for handling events (e.g., `onClick`) in the parent, making the child component reusable.
+    - The parent component defines the behavior, such as logging the clicked item or performing custom logic.
+  - **Naming Conventions**:
+
+    - By convention, function props begin with `on` followed by the event name, e.g., `onSelectItem`.
+    - Event handlers often begin with `handle`, e.g., `handleSelectItem`.
+
+  - You can pass an inline function directly instead of defining it separately:
+
+  ```tsx
+  return (
+    <ListGroup
+      items={items}
+      heading="Cities"
+      onSelectItem={(item) => console.log("Clicked:", item)} // Inline function.
+    />
+  );
+  ```
+
+  ```tsx
+  const logCity = (city: string) => console.log("City:", city);
+  const logFruit = (fruit: string) => console.log("Fruit:", fruit);
+
+  return (
+    <>
+      <ListGroup items={cities} heading="Cities" onSelectItem={logCity} />
+      <ListGroup items={fruits} heading="Fruits" onSelectItem={logFruit} />
+    </>
+  );
+  ```
+
+  - **Reusability**: The `ListGroup` component can be used in multiple scenarios with different behaviors.
+  - **Separation of Concerns**: The child component focuses only on rendering the list and notifying the parent when an event occurs. The parent handles the specific logic.
+  - **Flexibility**:The parent defines what happens when an item is selected, making it easy to adapt to different application requirements.
+
+### **State vs Props**
+
+- React provides two key concepts for managing data in components: **Props** and **State**. Both determine how a component behaves and renders, but they serve different purposes.
+- **Props (Properties):**:
+
+  - **Definition:** Props are input arguments passed to a component by its parent.
+  - **Purpose:** Used to pass data and behavior (functions) from a parent component to a child component.
+  - **Characteristics:**
+    - Similar to function arguments.
+    - Props are **immutable**—while technically they can be changed, they **should not** be modified within the child component.
+    - Follow the principles of **functional programming**.
+
+  ```tsx
+  function Welcome({ name }: { name: string }) {
+    return <h1>Hello, {name}!</h1>;
+  }
+
+  function App() {
+    return <Welcome name="John" />;
+  }
+  ```
+
+  - `name` is passed as a **prop** to the `Welcome` component.
+  - The `Welcome` component uses it to display a personalized greeting.
+
+- **State**:
+
+  - **Definition**: State is internal data managed by a component, which can change over time.
+  - **Purpose**: Used to manage data that is specific to a component and can be updated by user interactions or other events.
+  - **Characteristics**: - Similar to local variables but tied to React’s lifecycle. - State is **mutable**—you can update it using `setState` or hooks like `useState`. - React re-renders the component whenever the state changes, ensuring the UI stays in sync.
+
+  ```tsx
+  import { useState } from "react";
+
+  function Counter() {
+    const [count, setCount] = useState(0);
+
+    return (
+      <div>
+        <p>Count: {count}</p>
+        <button onClick={() => setCount(count + 1)}>Increment</button>
+      </div>
+    );
+  }
+  ```
+
+  - `count` is a piece of state managed by the `Counter` component.
+  - Clicking the button updates the state and triggers a re-render of the component.
+
+- **What They Have in Common:**
+
+  - Both `props` and `state` are used to control how a component behaves and renders.
+  - Changes in either `props` or `state` will cause React to re-render the component and update the DOM as needed.
+
+- **Best Practices**:
+
+  - Use **props** for data that does not change and needs to be passed down from a parent component.
+  - Use **state** for data that is local to the component and needs to be updated dynamically.
+  - Avoid directly mutating `props` or `state`. Instead:
+    - For `props`, pass new values from the parent.
+    - For `state`, use React’s provided methods (`setState` or hooks).
+
+### **Passing Children:**
+
+- In React, components can accept **children** as a special prop, allowing you to pass dynamic or nested content. This is especially useful when creating reusable components.
+- Let’s build an `Alert` component that accepts and displays children.
+
+  1. Use the ES7+ extension (optional) to scaffold the component quickly.
+
+  - `rafce` → Short for React Arrow Function Component Export.
+    example create arlet.tsx
+
+  2. Example: `Alert.tsx`
+
+  ```tsx
+  import React from "react";
+
+  const Alert = () => {
+    return <div>Alert</div>;
+  };
+
+  export default Alert;
+  ```
+
+  3. Style the `Alert` Component
+
+  - To style the component dynamically, use **Bootstrap classes** (or any styling method).
+
+  ```tsx
+  Update the `Alert` component like this:
+  import React from "react";
+
+  const Alert = () => {
+    return <div className="alert alert-primary">Alert</div>;
+  };
+
+  export default Alert;
+  ```
+
+  4. Add Props for Dynamic Content
+
+  - To make the `Aler`t component dynamic, update it to accept **props**. For example:
+
+    - Define an interface for the props:
+
+    ```tsx
+    interface Props {
+      text: string;
+    }
+    ```
+
+  - Update the Alert component:
+
+  ```tsx
+  import React from "react";
+
+  interface Props {
+    text: string;
+  }
+
+  const Alert = ({ text }: Props) => {
+    return <div className="alert alert-primary">{text}</div>;
+  };
+
+  export default Alert;
+  ```
+
+  - Use it in the `App` component:
+
+  ```tsx
+  import Alert from "./Alert";
+
+  function App() {
+    return <Alert text="Hello World!" />;
+  }
+
+  export default App;
+  ```
+
+  5. Pass Children Instead of Props:
+
+  - While the above implementation works, it becomes inconvenient for long or complex content. A better approach is to use the special `children` prop.
+
+  ```tsx
+  import React, { ReactNode } from "react";
+
+  interface Props {
+    children: ReactNode;
+  }
+
+  const Alert = ({ children }: Props) => {
+    return <div className="alert alert-primary">{children}</div>;
+  };
+
+  export default Alert;
+  ```
+
+  - Use the `Alert` component in the `App` component with nested content:
+
+  ```tsx
+  import Alert from "./Alert";
+
+  function App() {
+    return (
+      <div>
+        <Alert>Hello World!</Alert>
+        <Alert>
+          <strong>Warning:</strong> Please proceed with caution!
+        </Alert>
+      </div>
+    );
+  }
+
+  export default App;
+  ```
+
+  - **Why Use** `children`?
+
+    - **Flexibility**: You can pass complex HTML or other React components.
+    - **Reusability**: The component becomes more generic and reusable for different content.
+
+  - Common Types for `children`:
+
+    - Use `ReactNode` from the `react` package to allow various types of children, including:
+
+      - Strings
+      - JSX elements
+      - Arrays of JSX elements
+      - Null or undefined
+      - Functions
+      - Etc.
+
+    ```tsx
+    interface Props {
+      children: ReactNode;
+    }
+    ```
+
+  - The `children` prop is a special built-in prop that lets you pass nested content to components.
+  - Use `ReactNode` to define the type of `children` in TypeScript.
+  - This pattern improves the flexibility and reusability of your components.
+  - By using `children`, you can create dynamic and flexible React components effortlessly.
+
+### **Inspecting components with React Dev Tools**:
+
+- React Dev Tools is an essential extension for inspecting and analyzing React applications. It helps developers understand the structure and behavior of their app.
+- React Dev Tools is available for popular browsers like **Google Chrome** and **Microsoft Edge**.
+- **Installation**:
+
+  1. Open your browser's extension/add-on store.
+  2. Search for **React Developer Tools**.
+  3. Install the extension.
+
+- **Key features**:
+
+  1. **Component Tab**:
+
+  - View the hierarchy of the component tree.
+  - Analyze how React renders the actual DOM.
+
+  2. **Props and State**:
+
+  - Inspect the props and state of each component in detail.
+
+  3. **Search Functionality**:
+
+  - Quickly locate a specific component in large applications with a search bar.
+
+  4. **Select and Inspect**:
+
+  - Select a component and inspect its matching DOM element.
+  - Click on the `<>` (source code) icon to navigate to the source code of the selected component.
+
+- Simplifies debugging by providing a clear visual hierarchy of components.
+- Helps identify potential issues with props or state.
+- Saves time in large applications with a search and inspect workflow.
+
+### **Exercise - Building a Button Component**:
+
+- Tips:
+- You can make the button reusable by dynamically assigning its class names using Bootstrap styles. For example:
+
+```tsx
+className={"btn btn-" + color}
+```
+
+- In your `App` component, pass the color prop such as "`primary`", "`secondary`", etc.
+- To avoid specifying certain properties every time, assign default values to your props.
+
+```tsx
+const Button: React.FC<Props> = ({ children, onClick, color = "primary" }) => {
+  return (
+    <button className={`btn btn-${color}`} onClick={onClick}>
+      {children}
+    </button>
+  );
+};
+```
+
+- Use the `?` in the interface to make a property optional:
+
+```tsx
+color?: string;
+```
+
+- This ensures that if the property is not provided, the component still works without errors.
+- To prevent bugs caused by invalid color values, restrict the `color` prop to specific values using a union type:
+  `color?: "primary" | "secondary" | "danger";`
+
+- For better readability and maintainability, always list properties in **alphabetical order** within the interface.
