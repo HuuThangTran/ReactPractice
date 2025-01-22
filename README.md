@@ -1174,3 +1174,11 @@ color?: string;
   `color?: "primary" | "secondary" | "danger";`
 
 - For better readability and maintainability, always list properties in **alphabetical order** within the interface.
+
+### **Styling Components**:
+
+- In this module, you will learn various approaches to styling components in React, including:
+  - **Vanilla CSS:**: Using standard CSS stylesheets for styling components.
+  - **CSS Modules:**: A scoped CSS approach where styles are locally scoped to the component, avoiding class name conflicts.
+  - **CSS-in-JS:**: Embedding CSS styles directly within JavaScript using libraries like styled-components or emotion.
+  - **Using CSS Libraries:**: Utilizing pre-built UI libraries like Bootstrap, Material-UI, or Tailwind CSS for styling components.
