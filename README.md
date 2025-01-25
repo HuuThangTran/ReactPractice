@@ -1178,7 +1178,455 @@ color?: string;
 ### **Styling Components**:
 
 - In this module, you will learn various approaches to styling components in React, including:
+
   - **Vanilla CSS:**: Using standard CSS stylesheets for styling components.
   - **CSS Modules:**: A scoped CSS approach where styles are locally scoped to the component, avoiding class name conflicts.
   - **CSS-in-JS:**: Embedding CSS styles directly within JavaScript using libraries like styled-components or emotion.
   - **Using CSS Libraries:**: Utilizing pre-built UI libraries like Bootstrap, Material-UI, or Tailwind CSS for styling components.
+
+## Styling Components
+
+### **Vanilla CSS**:
+
+- Vanilla CSS is a simple way to style components, but it is often not recommended for modern React projects because:
+  - There are many powerful CSS libraries available (e.g., Bootstrap, Material UI, Tailwind) that are faster and easier to use
+  - Writing Vanilla CSS can be time-consuming and tedious, especially for complex applications.
+- How to Use Vanilla CSS:
+
+  1. **Removing Libraries:**
+
+  - In main.tsx, remove any pre-installed libraries like Bootstrap. This ensures your styles will be custom and built from scratch.
+
+  2. **Creating a CSS File:**
+
+  - Place the CSS file next to the component it styles.
+
+  3. **Importing the CSS File:**
+
+  - Import the CSS file in the component file:
+    `import "./ListGroup.css";`
+
+  4. **Example CSS:**
+
+  - Add styles specific to your component in `ListGroup.css`:
+
+  ```css
+  .list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  ```
+
+- **Tips: **
+
+  - Some argue that all CSS files should go in a separate css folder. However, cohesion (a programming concept) suggests that related files should be grouped together. Since your component depends on the CSS file, it's a good idea to keep them together.
+  - Take organization one step further by creating component-specific folders.
+
+  ```markdown
+  components/
+  ListGroup/
+  ListGroup.tsx
+  ListGroup.css
+  index.ts
+  ```
+
+  - Using an Index File: You can simplify imports by creating an `index.ts` file:
+
+    ```
+    import ListGroup from "./ListGroup";
+    export default ListGroup;
+    ```
+
+    - Now, you can import the component like this:
+      `import ListGroup from "./components/ListGroup";`
+    - The compiler automatically looks for `index.ts` when referencing a folder, making your imports cleaner.
+
+### **CSS Modules:**
+
+- CSS Modules solve the problem of style clashes often encountered with vanilla CSS.
+- In vanilla CSS, style clashes occur when two CSS files define the same class name. For example:
+
+```css
+/* ListGroup.css */
+.list-group {
+  /* styles */
+}
+
+/* App.css */
+.list-group {
+  /* different styles */
+}
+```
+
+- This leads to overlapping styles, causing bugs and making the application harder to maintain.
+- CSS Modules ensure all class names are scoped locally by default, preventing clashes between styles.
+
+```css
+/* ListGroup.module.css */
+.list-group {
+  /* scoped styles */
+}
+```
+
+- These styles are encoded uniquely during the build process, ensuring no conflicts across the app.
+- **How to Use CSS Modules**:
+
+  1. Create a `.module.css` File
+
+  - Example: `ListGroup.module.css`
+
+  ```css
+  .list-group {
+    list-style: none;
+  }
+  ```
+
+  2. Import the Module in the Component
+     `import styles from "./ListGroup.module.css";`
+
+  3. Access Styles via `styles` Object
+
+  - Use dot notation for valid property names:
+    `<div className={styles.listGroup}></div>`
+  - For invalid property names (e.g., hyphens), use square bracket notation:
+    `<div className={styles["list-group"]}></div>`
+
+  - To avoid square bracket notation, use camel case for class names:
+
+  ```css
+  /* ListGroup.module.css */
+  .listGroup {
+    /* styles */
+  }
+  ```
+
+  `<div className={styles.listGroup}></div>`
+
+  - Combine multiple classes using the join() method:
+    `<div className={[styles.listGroup, styles.container].join(" ")}></div>`
+
+- **How CSS Modules Work Internally**
+
+  - During bundling, tools like Vite encode class names uniquely. For example:
+
+  ```css
+  .list-group {
+  /* becomes something like */
+  _ListGroup_list-group__a1b2c3;
+  }
+  ```
+
+  - This ensures that styles are isolated and won't clash with others.
+
+- **Common Import Syntax with Modules**
+
+1. Import specific exports:
+   `import { something } from "module";`
+2. Import all exports as an object:
+   `import * as something from "module";`
+3. Import a default export:
+   `import something from "module";`
+4. Import a module for its side effects:
+   `import "module";`
+
+### **CSS-IN-JS**:
+
+- The idea behind CSS-in-JS is to write all the styles for a component directly next to its definition in a JavaScript or TypeScript file. This approach keeps styles tightly coupled with the component logic.
+- CSS-in-JS is a controversial technology
+- **Benefits of CSS-in-JS**:
+  - **Scoped Styles**: Like CSS Modules, styles are scoped to the component, preventing naming clashes.
+  - **Co-location:** All CSS and JS/TS code resides in one place, making it easier to manage and delete components without affecting others.
+  - **Dynamic Styling:** It’s easier to style components based on their props or state.
+  - **Component-Based:** Styles are tied to components, promoting reusability and modularity.
+- **Popular Libraries**:
+  - Styled Components
+  - Emotion
+- **Getting Started with Styled Components**:
+
+1. **Installation**
+
+- To use Styled Components, install the library and its TypeScript type definitions:
+
+```bash
+npm install styled-components
+npm install @types/styled-components
+```
+
+- The `@types` repository contains TypeScript type definitions for popular JavaScript libraries.
+
+2. **Usage**
+   // prettier-ignore
+
+- _Import Styled Components:_
+
+  - At the top of your component file, import the styled function:
+    `import styled from 'styled-components';`
+
+- _Create Styled Components:_
+
+  - Instead of using class names, you create React components with styles directly applied:
+
+  ```js
+  const List = styled.ul`
+    list-style: none;
+    padding: 0;
+  `;
+
+  const ListItem = styled.li`
+    padding: 5px 0;
+  `;
+  ```
+
+  - These components can now be used in your JSX:
+
+  ```tsx
+  <List>
+    <ListItem>Item 1</ListItem>
+    <ListItem>Item 2</ListItem>
+  </List>
+  ```
+
+3. **Dynamic Styling with Props**
+
+- Styled Components allow you to style elements dynamically based on props or state.
+
+  - _Define Props Interface (TypeScript):_
+    - If you’re using TypeScript, define the shape of the props for your component:
+    ```tsx
+    interface ListItemProps {
+      active: boolean;
+    }
+    ```
+  - _Apply Dynamic Styles:_
+    - Use a template literal to conditionally apply styles based on props:
+    ```tsx
+    const ListItem = styled.li<ListItemProps>`
+      padding: 5px 0;
+      background: ${(props) => (props.active ? "blue" : "none")};
+    `;
+    ```
+  - _Pass Props to Component:_
+
+    - In your component, pass the active prop dynamically:
+
+    ```tsx
+    const [selectedIndex, setSelectedIndex] = useState(0);
+
+    <List>
+      {items.map((item, index) => (
+        <ListItem
+          key={item.id}
+          active={index === selectedIndex}
+          onClick={() => setSelectedIndex(index)}
+        >
+          {item.name}
+        </ListItem>
+      ))}
+    </List>;
+    ```
+
+- **Why Use Styled Components?**
+  - **Scoped Styles:** No global style conflicts.
+  - **Dynamic Styling:** Easily style components based on props or state.
+  - **Co-location:** Keep styles and logic in one place for better maintainability.
+  - **Reusability:** Create reusable styled components.
+- Here’s a complete example of using Styled Components in a React app:
+
+```tsx
+import React, { useState } from "react";
+import styled from "styled-components";
+
+interface ListItemProps {
+  active: boolean;
+}
+
+const List = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const ListItem = styled.li<ListItemProps>`
+  padding: 5px 0;
+  background: ${(props) => (props.active ? "blue" : "none")};
+  color: ${(props) => (props.active ? "white" : "black")};
+  cursor: pointer;
+`;
+
+const items = [
+  { id: 1, name: "Item 1" },
+  { id: 2, name: "Item 2" },
+  { id: 3, name: "Item 3" },
+];
+
+const App = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  return (
+    <List>
+      {items.map((item, index) => (
+        <ListItem
+          key={item.id}
+          active={index === selectedIndex}
+          onClick={() => setSelectedIndex(index)}
+        >
+          {item.name}
+        </ListItem>
+      ))}
+    </List>
+  );
+};
+
+export default App;
+```
+
+### **Seperation of conerns**:
+
+- The Separation of Concerns principle recommends dividing a program into distinct sections, where each section handles a specific functionality, rather than combining everything in one place. This approach makes programs:
+- **Modular**: means that the program is broken down into smaller, self-contained components or modules.
+  - Be built and tested independently.
+  - Be reused in other programs.
+  - Handle specific concerns or tasks, much like distinct roles in a restaurant (e.g., chef, server, cleaner).
+- **Easier to Understand**: Smaller, focused modules are simpler to comprehend.
+- **Easier to Maintain**: Debugging or updating a specific functionality is straightforward when the logic is isolated.
+- **Easier to Modify**: Changing one module doesn't disrupt the others as long as the interface remains consistent.
+- In modular programs, complexity and implementation details are hidden behind a well-defined interface.
+
+### **Inline Styles:**
+
+- Inline styles allow you to apply styles directly to individual elements in your components, similar to how you would use the `style` attribute in HTML. However, inline styles are generally **not recommended** for most use cases because they can make your code harder to read and maintain. They should be reserved for very specific or dynamic styling needs.
+
+```tsx
+<div style={{ backgroundColor: isActive ? "green" : "red" }}>
+  Dynamic background color
+</div>
+```
+
+### **Popular UI Libraries**:
+
+- In modern development, UI libraries help create beautiful and responsive applications efficiently. Below are some of the most popular ones:
+
+1. **Bootstrap**
+
+- A widely-used framework offering a collection of pre-designed components like buttons, modals, and forms.
+- Ideal for quickly building responsive designs with minimal effort.
+- Bootstrap uses **className-based** styling with HTML elements. You can also integrate it into React using libraries like `react-bootstrap`.
+
+```tsx
+import "bootstrap/dist/css/bootstrap.min.css";
+function App() {
+  return (
+    <div className="container">
+      <Button variant="primary">Bootstrap Button</Button>
+    </div>
+  );
+}
+```
+
+2. **Material UI (MUI)**
+
+- An open-source React component library implementing Google's Material Design principles.
+- Offers sleek, accessible, and customizable components for modern applications.
+- Material UI provides full-fledged React components.
+
+```tsx
+import React from "react";
+import Button from "@mui/material/Button";
+
+function App() {
+  return (
+    <div>
+      <Button variant="contained" color="primary">
+        Material UI Button
+      </Button>
+    </div>
+  );
+}
+```
+
+3. **Tailwind CSS**
+
+- A utility-first CSS framework that provides low-level utility classes for styling.
+- Instead of predefined components, you get small utility classes like:
+  - list-none: Sets list-style: none.
+  - p-0: Sets padding: 0.
+- Highly customizable, making it a favorite for developers who want control over their designs.
+
+```tsx
+function App() {
+  return (
+    <div className="p-4 bg-gray-100">
+      <button className="bg-blue-500 text-white py-2 px-4 rounded">
+        Tailwind Button
+      </button>
+    </div>
+  );
+}
+```
+
+4. **Daisy UI**
+
+- A lightweight CSS framework built on top of Tailwind CSS.
+- Provides pre-styled components while retaining the flexibility of utility-first design.
+- Daisy UI works on top of Tailwind CSS and provides pre-styled components with className.
+
+```tsx
+function App() {
+  return (
+    <div className="p-4">
+      <button className="btn btn-primary">Daisy UI Button</button>
+    </div>
+  );
+}
+```
+
+5. **Chakra UI**
+
+- A React component library similar to Material UI.
+- Focuses on accessibility, theme customization, and ease of use.
+- Chakra UI provides full-fledged React components.
+
+```tsx
+import { Button } from "@chakra-ui/react";
+
+function App() {
+  return (
+    <div>
+      <Button colorScheme="blue">Chakra UI Button</Button>
+    </div>
+  );
+}
+```
+
+### **Adding Icons**:
+
+- To add icons to your React project, you can use the popular react-icons library. This library provides access to a wide variety of icon packs, including Bootstrap Icons, Ant Design Icons, Boxicons, and more.
+- Install the react-icons package using npm:
+  `npm install react-icons`
+- `react-icons `is a collection of various icon libraries packaged as React components.
+- Each library has a unique prefix to identify its icons (e.g., `Bs` for Bootstrap Icons, Fa for Font Awesome, etc.).
+- **Usage**:
+
+  - Import an Icon
+    `import { BsFillCalendar } from 'react-icons/bs';`
+  - Add the Icon to Your Component
+
+    - React icons are used like any other React component. You can pass props such as `color` and `size` to customize them, use standard attributes like className or onClick as needed.
+
+    ```tsx
+    function App() {
+      return (
+        <div>
+          <h1>React Icons Example</h1>
+          {/* Add the icon with custom size and color */}
+          <BsFillCalendar color="red" size="40" />
+        </div>
+      );
+    }
+
+    export default App;
+    ```
+
+## **Managing Component State:**
+
+- State management is a fundamental concept in React. In this section, we will dive into how component state is stored and updated. Understanding this is crucial for building complex and dynamic applications.
